@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace backend.Controllers;
 
 [ApiController]
-[Route("api")]
+[Route("api/[controller]")]
 public class TodoController(TodoContext context) : ControllerBase
 {
     [HttpGet]
