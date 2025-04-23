@@ -9,13 +9,13 @@ namespace backend.Controllers;
 [Route("api")]
 public class TodoController(TodoContext context) : ControllerBase
 {
-    [HttpGet("GetTodos")]
+    [HttpGet]
     public async Task<ActionResult<IEnumerable<TodoItem>>> GetTodos()
     {
         return await context.TodoItems.ToListAsync();
     }
 
-    [HttpPost("AddTodo")]
+    [HttpPost]
     public async Task<ActionResult<TodoItem>> AddTodo(TodoItem item)
     {
         context.TodoItems.Add(item);
@@ -24,7 +24,7 @@ public class TodoController(TodoContext context) : ControllerBase
         return CreatedAtAction(nameof(GetTodos), new { id = item.Id }, item);
     }
 
-    [HttpPut("UpdateTodo/{id}")]
+    [HttpPut("{id}")]
     public async Task<IActionResult> UpdateTodo(int id, TodoItem item)
     {
         if (id != item.Id) 
@@ -36,7 +36,7 @@ public class TodoController(TodoContext context) : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("DeleteTodo/{id}")]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteTodo(int id)
     {
         var todo = await context.TodoItems.FindAsync(id);
