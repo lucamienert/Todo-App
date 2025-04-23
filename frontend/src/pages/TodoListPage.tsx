@@ -16,12 +16,12 @@ export default function TodoListPage() {
 
   return (
     <div className="max-w-md mx-auto p-4 space-y-4">
-      <h1 className="text-2xl font-bold text-center">📝 ToDo App</h1>
+      <h1 className="text-2xl font-bold text-center">ToDo App</h1>
       <button
         onClick={() => navigate("/new")}
         className="bg-blue-500 text-white px-4 py-1 rounded"
       >
-        ➕ Neue Aufgabe
+        Neue Aufgabe
       </button>
       <ul className="space-y-2">
         {todos.map((todo) => (
