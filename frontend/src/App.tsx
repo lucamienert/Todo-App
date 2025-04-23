@@ -1,12 +1,17 @@
-import './App.css'
-import TodoList from './components/TodoList'
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 
-function App() {
+import TodoListPage from "./pages/TodoListPage"
+import NewTodoPage from "./pages/NewTodoPage"
+import EditTodoPage from "./pages/EditTodoPage"
+
+export default function App() {
   return (
-    <div className="min-h-screen bg-gray-100">
-      <TodoList />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<TodoListPage />} />
+        <Route path="/new" element={<NewTodoPage />} />
+        <Route path="/edit/:id" element={<EditTodoPage />} />
+      </Routes>
+    </Router>
   )
 }
-
-export default App

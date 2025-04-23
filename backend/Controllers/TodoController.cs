@@ -15,6 +15,17 @@ public class TodoController(TodoContext context) : ControllerBase
         return await context.TodoItems.ToListAsync();
     }
 
+    [HttpGet("{id}")]
+    public async Task<ActionResult<TodoItem>> GetTodo(int id)
+    {
+        var todo = await context.TodoItems.FindAsync(id);
+
+        if (todo == null) 
+            return NotFound();
+
+        return todo;
+    }
+
     [HttpPost]
     public async Task<ActionResult<TodoItem>> AddTodo(TodoItem item)
     {
