@@ -4,10 +4,15 @@ EXPOSE 8080
 
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
-COPY ["backend/backend.csproj", "./"]
-RUN dotnet restore "backend.csproj"
+COPY ["backend.csproj", "./"]
+RUN dotnet restore "./backend.csproj"
+
+# EF CLI installieren
+RUN dotnet tool install --global dotnet-ef
+ENV PATH="$PATH:/root/.dotnet/tools"
+
 COPY . .
-RUN dotnet publish "backend.csproj" -c Release -o /app/publish
+RUN dotnet publish "./backend.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
