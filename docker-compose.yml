@@ -1,49 +1,57 @@
 services:
-
   db:
     image: postgres:15
-    container_name: todo-db
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-    volumes:
-      - pgdata:/var/lib/postgresql/data
+      POSTGRES_DB: todo_db
+      POSTGRES_USER: todo_user
+      POSTGRES_PASSWORD: todo_pass
     ports:
       - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - todo-net
+
+  migrator:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+      target: build
+    depends_on:
+      - db
+    environment:
+      ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=todo_db;Username=todo_user;Password=todo_pass
+    entrypoint: ["dotnet", "ef", "database", "update"]
+    networks:
+      - todo-net
 
   backend:
-    build: ./backend
-    container_name: todo-api
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Host=db;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    depends_on:
+      - db
+      - migrator
     ports:
       - "8080:8080"
-    depends_on:
-      - db
-
-  ef-migrations:
-    build:
-      context: ./backend
-    container_name: ef-migrator
-    command: >
-      bash -c "
-      dotnet ef database update &&
-      tail -f /dev/null"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Host=db;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
-    depends_on:
-      - db
+      ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=todo_db;Username=todo_user;Password=todo_pass
+    networks:
+      - todo-net
 
   frontend:
-    build: ./frontend
-    container_name: todo-frontend
+    build:
+      context: frontend
+      dockerfile: Dockerfile
     ports:
-      - "3000:80"
+      - "5173:5173"
     depends_on:
       - backend
+    networks:
+      - todo-net
 
 volumes:
   pgdata:
+
+networks:
+  todo-net:

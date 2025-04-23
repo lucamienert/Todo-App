@@ -1,10 +1,11 @@
 #!/bin/bash
 
-echo "▶️ Warten auf die Datenbank..."
-sleep 5  # optional, oder verwende später wait-for-it.sh
+echo "Waiting for Database..."
 
-echo "🚀 Führe Migration aus..."
-dotnet ef database update
+until dotnet ef database update; do
+  >&2 echo "Database unavailable, retrying in 3 seconds"
+  sleep 3
+done
 
-echo "✅ Starte WebAPI..."
+echo "Starting API..."
 exec dotnet backend.dll
